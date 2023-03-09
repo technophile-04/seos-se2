@@ -1,57 +1,87 @@
 import type { NextPage } from "next";
+import React, { useState, useEffect } from "react";
+import { useScaffoldContractRead } from "~~/hooks/scaffold-eth/useScaffoldContractRead";
+import { useAccount } from "wagmi";
+
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  makeStyles,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  Link,
+  Popover,
+  Typography,
+  TableBody,
+  Button,
+} from "@material-ui/core";
+import { useRouter } from "next/router";
 import Head from "next/head";
-import { BugAntIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import React from "react";
+import { useAppStore } from "~~/services/store/store";
+
+const useStyles = makeStyles(theme => ({
+  card: {
+    maxWidth: 345,
+    margin: "10px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100vh",
+  },
+}));
 
 const Home: NextPage = () => {
+  const { tempSlice } = useAppStore();
+  const { address, isConnected } = useAccount();
+  const classes = useStyles();
+  const router = useRouter();
+  const [userData, setUserData] = useState(null);
+  const contractName = "FarmMainRegularMinStake";
+  const functionName = "setups";
+  let data: any;
+  const contract = useScaffoldContractRead(contractName, functionName);
+  if (contract.data) {
+    data = contract.data;
+  }
+
+  useEffect(() => {
+    if (address) {
+      tempSlice.setAddress(address);
+    }
+  }, [address, tempSlice]);
+
+  const handleClick = (setupId: string) => {
+    tempSlice.setPID(setupId);
+    router.push(`/setup/${setupId}`);
+  };
+
+  console.log("data", data, "userData", userData);
   return (
     <>
       <Head>
         <title>Scaffold-eth App</title>
         <meta name="description" content="Created with 🏗 scaffold-eth" />
       </Head>
-
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">scaffold-eth 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/nextjs/pages/index.tsx</code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract <code className="italic bg-base-300 text-base font-bold">YourContract.sol</code> in{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/hardhat/contracts</code>
-          </p>
-        </div>
-
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <SparklesIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Experiment with{" "}
-                <Link href="/example-ui" passHref className="link">
-                  Example UI
-                </Link>{" "}
-                to build your own UI.
-              </p>
-            </div>
-          </div>
-        </div>
+      <div>Your address is: {tempSlice.address}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center" }}>
+        {data?.map((setup: any, index: any) => (
+          <Card key={index} className={classes.card} onClick={() => handleClick(index)}>
+            <CardHeader title={`pid: ${index}`} />
+            <CardContent>
+              <Typography variant="body2" color="textSecondary" component="p">
+                <strong>rewardPerBlock:</strong> {setup.rewardPerBlock?.toString()}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" component="p">
+                <strong>endBlock:</strong> {setup.endBlock?.toNumber()}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </>
   );

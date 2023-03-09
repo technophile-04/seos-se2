@@ -22,7 +22,7 @@ export const useDeployedContractInfo = (contractName: string | undefined | null)
       setIsLoading(true);
       let ContractData;
       try {
-        ContractData = require("~~/generated/hardhat_contracts.json");
+        ContractData = require("~~/contracts/hardhat_contracts.json");
         const contractsAtChain = ContractData[configuredChain.id as keyof typeof ContractData];
         const contractsData = contractsAtChain?.[0]?.contracts;
         const deployedContract = contractsData?.[contractName as keyof typeof contractsData];
