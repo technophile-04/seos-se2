@@ -30,7 +30,12 @@
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
+    "@graphprotocol/client-cli": "^2.2.20",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.12.4",
+    "graphql-tag": "^2.12.6"
   }
 }
