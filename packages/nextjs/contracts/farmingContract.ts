@@ -1,5 +1,5 @@
 // Farming interface
-export const FarmMainRegularMinStakeABI = {
+export const FarmMainRegularMinStake = {
   address: "0x679780Ea3133C388E3c7efeb22e98a68Ccf99aFf",
   abi: [
     {

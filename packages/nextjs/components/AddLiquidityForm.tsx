@@ -21,7 +21,7 @@ const AddLiquidityForm = () => {
 
   const [error, setError] = useState("");
 
-  const contractName = "FarmMainRegularMinStakeABI";
+  const contractName = "FarmMainRegularMinStake";
   const functionName = "addLiquidity";
   const account = useAccount();
   const { balance, price, isError, onToggleBalance, isEthBalance } = useAccountBalance(account.address);
