@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
-import { TextField, Button, Grid, Typography } from "@material-ui/core";
+import { TextField, Button, Grid, Typography, FormControlLabel, Checkbox } from "@material-ui/core";
 import BigNumber from "bignumber.js";
 import { fetchPool } from "~~/utils/scaffold-eth/fetchPool";
 import { useAccount, useProvider } from "wagmi";
@@ -8,8 +8,11 @@ import { Contract } from "ethers";
 import { useAccountBalance } from "~~/hooks/scaffold-eth/useAccountBalance";
 import { useAppStore } from "~~/services/store/store";
 import { UserPositions } from "~~/services/store/slices/querySlice";
+import { ethers } from "ethers";
 
 const AddLiquidityForm = () => {
+  const addressZero = ethers.constants.AddressZero;
+  const [showPositionOwner, setShowPositionOwner] = useState(false);
   const { tempSlice } = useAppStore();
   const [amount0, setAmount0] = useState("");
   const [amount1, setAmount1] = useState("");
@@ -158,7 +161,7 @@ const AddLiquidityForm = () => {
           setupIndex: tempSlice.pid,
           amount0: new BigNumber(amount0),
           amount1: new BigNumber(amount1),
-          positionOwner: positionOwner,
+          positionOwner: positionOwner || addressZero,
           amount0Min: new BigNumber(amount0Min),
           amount1Min: new BigNumber(amount1Min),
         },
@@ -168,7 +171,7 @@ const AddLiquidityForm = () => {
           setupIndex: tempSlice.pid,
           amount0: new BigNumber(amount0),
           amount1: new BigNumber(amount1),
-          positionOwner: positionOwner,
+          positionOwner: positionOwner || addressZero,
           amount0Min: new BigNumber(amount0Min),
           amount1Min: new BigNumber(amount1Min),
         },
@@ -194,6 +197,18 @@ const AddLiquidityForm = () => {
       <form>
         <div> Setup Index: {tempSlice.pid} </div>
         <div> Position ID: {positionId} </div>
+        <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showPositionOwner}
+                onChange={e => setShowPositionOwner(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Specify Position Owner"
+          />
+        </div>
         <TextField
           label="Amount 0"
           variant="outlined"
@@ -208,14 +223,6 @@ const AddLiquidityForm = () => {
           type="number"
           value={amount1}
           onChange={handleAmount1Change}
-          style={{ margin: "20px 0" }}
-        />
-        <TextField
-          label="Position Owner"
-          variant="outlined"
-          type="text"
-          value={positionOwner}
-          onChange={e => setPositionOwner(e.target.value)}
           style={{ margin: "20px 0" }}
         />
         <div style={{ margin: "20px 0" }}>
@@ -244,6 +251,16 @@ const AddLiquidityForm = () => {
             </Button>
           </div>
         </div>
+        {showPositionOwner && (
+          <TextField
+            label="Position Owner"
+            variant="outlined"
+            type="text"
+            value={positionOwner}
+            onChange={e => setPositionOwner(e.target.value)}
+            style={{ margin: "20px 0" }}
+          />
+        )}
         <TextField
           label="Amount 0 Minimum"
           variant="outlined"
