@@ -155,79 +155,34 @@ const AddLiquidityForm = () => {
           value: positionId,
         },
         {
-          name: "request",
-          type: "tuple",
-          components: [
-            {
-              name: "setupIndex",
-              type: "uint256",
-              value: new BigNumber(tempSlice.pid),
-            },
-            {
-              name: "amount0",
-              type: "uint256",
-              value: new BigNumber(amount0),
-            },
-            {
-              name: "amount1",
-              type: "uint256",
-              value: new BigNumber(amount1),
-            },
-            { name: "positionOwner", type: "address", value: positionOwner },
-            {
-              name: "amount0Min",
-              type: "uint256",
-              value: new BigNumber(amount0Min),
-            },
-            {
-              name: "amount1Min",
-              type: "uint256",
-              value: new BigNumber(amount1Min),
-            },
-          ],
+          setupIndex: tempSlice.pid,
+          amount0: new BigNumber(amount0),
+          amount1: new BigNumber(amount1),
+          positionOwner: positionOwner,
+          amount0Min: new BigNumber(amount0Min),
+          amount1Min: new BigNumber(amount1Min),
         },
       ]
     : [
         {
-          name: "request",
-          type: "tuple",
-          components: [
-            {
-              name: "setupIndex",
-              type: "uint256",
-              value: new BigNumber(tempSlice.pid),
-            },
-            {
-              name: "amount0",
-              type: "uint256",
-              value: new BigNumber(amount0),
-            },
-            {
-              name: "amount1",
-              type: "uint256",
-              value: new BigNumber(amount1),
-            },
-            { name: "positionOwner", type: "address", value: positionOwner },
-            {
-              name: "amount0Min",
-              type: "uint256",
-              value: new BigNumber(amount0Min),
-            },
-            {
-              name: "amount1Min",
-              type: "uint256",
-              value: new BigNumber(amount1Min),
-            },
-          ],
+          setupIndex: tempSlice.pid,
+          amount0: new BigNumber(amount0),
+          amount1: new BigNumber(amount1),
+          positionOwner: positionOwner,
+          amount0Min: new BigNumber(amount0Min),
+          amount1Min: new BigNumber(amount1Min),
         },
       ];
   console.log("args:", args);
+  console.log("tempSlice.pid:", tempSlice.pid);
+  console.log("seupIndex", args[0].setupIndex);
 
   const { isLoading, writeAsync } = useScaffoldContractWrite(contractName, functionNameToCall, args, "0");
 
   const handleClick = async () => {
     if (!isLoading) {
       await writeAsync();
+      console.log("writeAsync", writeAsync);
     }
   };
 
