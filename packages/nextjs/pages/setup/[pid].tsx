@@ -19,6 +19,15 @@ import { useRouter } from "next/router";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import AddLiquidityForm from "~~/components/AddLiquidityForm";
 import { useAppStore } from "~~/services/store/store";
+import { utils } from "ethers";
+
+const epochToDateAndTime = (epochTime: number) => {
+  const dateObj = new Date(epochTime * 1000);
+  const date = dateObj.toLocaleDateString();
+  const time = dateObj.toLocaleTimeString();
+
+  return `${date} ${time}`;
+};
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -67,9 +76,13 @@ const SetupCard: React.FC<SetupCardProps> = ({ web3, farmingContractAddress, chi
   let data: any;
   if (contract.data) {
     data = contract.data as any[];
-    data = data[0];
+    data = {
+      startBlock: data[0].startBlock ? epochToDateAndTime(data[0].startBlock.toString()) : "",
+      rewardPerBlock: data[0].rewardPerBlock ? utils.formatEther(data[0].rewardPerBlock) : "",
+      totalSupply: data[0].totalSupply ? utils.formatEther(data[0].totalSupply) : "",
+    };
+    console.log("⚡️ ~ file: [pid].tsx:82 ~ data:", data);
   }
-
   const variableNames = {
     startBlock: "Start Block",
     rewardPerBlock: "Reward per Block",
@@ -95,7 +108,7 @@ const SetupCard: React.FC<SetupCardProps> = ({ web3, farmingContractAddress, chi
                     <TableCell className={classes.tableCell} component="th" scope="row">
                       {value}
                     </TableCell>
-                    <TableCell className={classes.tableCell}>{JSON.stringify(data[key])}</TableCell>
+                    <TableCell className={classes.tableCell}>{data[key]}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
