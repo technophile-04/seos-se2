@@ -4,11 +4,11 @@ import { TextField, Button, Grid, Typography, FormControlLabel, Checkbox } from 
 import BigNumber from "bignumber.js";
 import { fetchPool } from "~~/utils/scaffold-eth/fetchPool";
 import { useAccount, useProvider } from "wagmi";
-import { Contract } from "ethers";
 import { useAccountBalance } from "~~/hooks/scaffold-eth/useAccountBalance";
 import { useAppStore } from "~~/services/store/store";
 import { UserPositions } from "~~/services/store/slices/querySlice";
 import { ethers } from "ethers";
+import { parseAmount } from "~~/utils/amountConversionWithHandler";
 
 const AddLiquidityForm = () => {
   const addressZero = ethers.constants.AddressZero;
@@ -153,37 +153,41 @@ const AddLiquidityForm = () => {
   const args = positionId
     ? [
         {
-          name: "positionId",
-          type: "uint256",
-          value: positionId,
-        },
-        {
           setupIndex: tempSlice.pid,
-          amount0: new BigNumber(amount0),
-          amount1: new BigNumber(amount1),
+          amount0: parseAmount(amount0),
+          amount1: parseAmount(amount1),
           positionOwner: positionOwner || addressZero,
-          amount0Min: new BigNumber(amount0Min),
-          amount1Min: new BigNumber(amount1Min),
+          amount0Min: parseAmount(amount0Min),
+          amount1Min: parseAmount(amount1Min),
         },
       ]
     : [
         {
-          setupIndex: tempSlice.pid,
-          amount0: new BigNumber(amount0),
-          amount1: new BigNumber(amount1),
+          // TODO : Use tempSlice.pid instead of hardcoding to 1, for some reason I was getting tempSlice.pid to be ""
+          setupIndex: "1",
+          amount0: parseAmount(amount0),
+          amount1: parseAmount(amount1),
           positionOwner: positionOwner || addressZero,
-          amount0Min: new BigNumber(amount0Min),
-          amount1Min: new BigNumber(amount1Min),
+          amount0Min: parseAmount(amount0Min),
+          amount1Min: parseAmount(amount1Min),
         },
       ];
   console.log("args:", args);
   console.log("tempSlice.pid:", tempSlice.pid);
   console.log("seupIndex", args[0].setupIndex);
 
-  const { isLoading, writeAsync } = useScaffoldContractWrite(contractName, functionNameToCall, args, "0");
+  const { isLoading, writeAsync } = useScaffoldContractWrite(contractName, functionNameToCall, args);
 
   const handleClick = async () => {
     if (!isLoading) {
+      console.log("🚀 Constructed args of the tuple", {
+        setupIndex: "1",
+        amount0: parseAmount(amount0),
+        amount1: parseAmount(amount1),
+        positionOwner: positionOwner || addressZero,
+        amount0Min: parseAmount(amount0Min),
+        amount1Min: parseAmount(amount1Min),
+      });
       await writeAsync();
       console.log("writeAsync", writeAsync);
     }
