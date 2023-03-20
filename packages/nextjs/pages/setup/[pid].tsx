@@ -69,6 +69,9 @@ const SetupCard: React.FC<SetupCardProps> = ({ web3, farmingContractAddress, chi
   const { tempSlice } = useAppStore();
   const classes = useStyles();
   const router = useRouter();
+  // @dev
+  // this is the contract for the MinStake farm position. Our first version should behardcoded  to the oregular one
+
   const contractName = "FarmMainRegularMinStake";
   const functionName = "setup";
   const { pid } = router.query;
